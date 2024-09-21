@@ -19,12 +19,16 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
 
+      - name: Debug Secrets
+        run: |
+          echo "Client ID: ${{ secrets.AZURE_CLIENT_ID }}"
+          echo "Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
+          echo "ACR Name: ${{ secrets.ACR_NAME }}"
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          creds: '{"clientId": "${{ secrets.AZURE_CLIENT_ID }}", "tenantId": "${{ secrets.AZURE_TENANT_ID }}", "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}"}'
 
       - name: ACR login
         run: |
