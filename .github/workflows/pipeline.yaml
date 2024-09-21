@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Pipeline
 # Controls when the action will run. 
 on:
@@ -13,13 +11,7 @@ on:
   workflow_dispatch:
 # Env to set reusable variables
 env:
-  ACR_NAME: ${{ secrets.ACR_NAME }}
-  ACR_LOGIN: ${{ secrets.ACR_LOGIN }}
-  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-  ACRNAME: handsonakspipeline
+  ACRNAME: ${{ secrets.ACR_NAME }}
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -36,12 +28,10 @@ jobs:
       - name: az CLI login
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          creds: '{"clientId": ${{ secrets.AZURE_CLIENT_ID }}, "tenantId": ${{ secrets.AZURE_TENANT_ID }}, "clientSecret": ${{ secrets.AZURE_CLIENT_SECRET }}}'
       
       - name: ACR login
-        run: az acr login -n ${{ env.ACR_NAME }} -u ${{ env.ACR_LOGIN }} -p ${{ env.ACR_PASSWORD }}
+        run: az acr login -n ${{ secrets.ACR_NAME }}
         
       
       - name: Build and push image
@@ -49,4 +39,4 @@ jobs:
         with:
           context: ./Chapter15
           push: true
-          tags: ${{ env.ACRNAME }}.azurecr.io/website/website:${{ github.run_number }}
+          tags: ${{ secrets.ACR_NAME }}.azurecr.io/website/website:${{ github.run_number }}
